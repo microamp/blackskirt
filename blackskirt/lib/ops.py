@@ -39,6 +39,10 @@ def _strfy(year, month, day):
                                          day=zfill(str(day), 2))
 
 
+def find_weekday(d, format=DATE_FORMAT):
+    return datetime.strptime(d, format).isoweekday()
+
+
 def type_convert(f):
     def wrap(offset, **kwargs):
         rv = f(datetime.strptime(offset, DATE_FORMAT), **kwargs)
@@ -49,12 +53,14 @@ def type_convert(f):
 
 @type_convert
 def next(offset, weekday=WEEKDAY_MON):
-    return add(offset, timedelta(days=_diff_next(offset.weekday(), weekday)))
+    return add(offset, timedelta(days=_diff_next(offset.isoweekday(),
+                                                 weekday)))
 
 
 @type_convert
 def prev(offset, weekday=WEEKDAY_MON):
-    return add(offset, timedelta(days=_diff_prev(offset.weekday(), weekday)))
+    return add(offset, timedelta(days=_diff_prev(offset.isoweekday(),
+                                                 weekday)))
 
 
 @type_convert
@@ -64,7 +70,8 @@ def nearest(offset, weekday=WEEKDAY_MON):
         diff_prev = _diff_prev(wd1, wd2, inclusive=True)
         return diff_next if lt(abs(diff_next), abs(diff_prev)) else diff_prev
 
-    return add(offset, timedelta(days=_days(offset.weekday(), weekday)))
+    return add(offset, timedelta(days=_days(offset.isoweekday(),
+                                            weekday)))
 
 
 def nth(year, month, n=1, weekday=WEEKDAY_MON):
@@ -73,7 +80,9 @@ def nth(year, month, n=1, weekday=WEEKDAY_MON):
     return reduce(
         add,
         (offset,
-         timedelta(days=_diff_next(offset.weekday(), weekday, inclusive=True)),
+         timedelta(days=_diff_next(offset.isoweekday(),
+                                   weekday,
+                                   inclusive=True)),
          timedelta(days=mul(WEEKDAYS, sub(n, 1))),)
     ).strftime(DATE_FORMAT)
 
@@ -83,7 +92,9 @@ def last(year, month, weekday=WEEKDAY_MON):
                                DATE_FORMAT)
     return add(
         offset,
-        timedelta(days=_diff_prev(offset.weekday(), weekday, inclusive=True))
+        timedelta(days=_diff_prev(offset.isoweekday(),
+                                  weekday,
+                                  inclusive=True))
     ).strftime(DATE_FORMAT)
 
 
