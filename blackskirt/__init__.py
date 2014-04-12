@@ -1,0 +1,15 @@
+# -*- coding: utf-8 -*-
+
+__version__ = "0.1"
+
+DATE_FORMAT = "%Y-%m-%d"
+
+WEEKDAY_MON = 0
+WEEKDAY_TUE = 1
+WEEKDAY_WED = 2
+WEEKDAY_THU = 3
+WEEKDAY_FRI = 4
+WEEKDAY_SAT = 5
+WEEKDAY_SUN = 6
+
+WEEKDAYS = 7
