@@ -19,18 +19,3 @@ last_weekday = ops.last
 next_date = ops.next_date
 prev_date = ops.prev_date
 nearest_date = ops.nearest_date
-
-
-if __name__ == "__main__":
-    assert mondayise("2014-01-04",
-                     cases=((WEEKDAY_SAT, WEEKDAY_MON),
-                            (WEEKDAY_SUN, WEEKDAY_MON))) == "2014-01-06"
-    assert mondayise("2014-01-05",
-                     cases=((WEEKDAY_SAT, WEEKDAY_MON),
-                            (WEEKDAY_SUN, WEEKDAY_MON))) == "2014-01-06"
-    assert mondayise("2014-01-06",
-                     cases=((WEEKDAY_SAT, WEEKDAY_MON),
-                            (WEEKDAY_SUN, WEEKDAY_MON))) == "2014-01-06"
-    assert mondayise("2014-01-07",
-                     cases=((WEEKDAY_SAT, WEEKDAY_MON),
-                            (WEEKDAY_SUN, WEEKDAY_MON))) == "2014-01-07"
