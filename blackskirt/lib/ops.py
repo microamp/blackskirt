@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sys import version_info
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from calendar import monthrange
 from operator import sub, add, neg, gt, ge, lt, mul
 from functools import partial
@@ -17,6 +17,10 @@ else:
 
 def _diff(x, y):
     return abs(sub(x, y))
+
+
+def _diff_dates(date1, date2):
+    return sub(date2, date1).days
 
 
 def _diff_next(wd1, wd2, inclusive=False):
@@ -47,6 +51,19 @@ def type_convert(f):
     def wrap(offset, **kwargs):
         rv = f(datetime.strptime(offset, DATE_FORMAT), **kwargs)
         return rv.strftime(DATE_FORMAT)
+
+    return wrap
+
+
+def set_offset(f):
+    def _to_date(dt_):
+        return date(dt_.year, dt_.month, dt_.day)
+
+    def wrap(*args, offset=None):
+        return f(*args,
+                 offset=(_to_date(datetime.strptime(offset, DATE_FORMAT))
+                         if offset else
+                         date.today()))
 
     return wrap
 
@@ -98,16 +115,29 @@ def last(year, month, weekday=WEEKDAY_MON):
     ).strftime(DATE_FORMAT)
 
 
-def next_date():
-    pass
+@set_offset
+def next_date(month, day, offset=None):
+    in_current_year = date(offset.year, month, day)
+    return (in_current_year
+            if gt(_diff_dates(offset, in_current_year), 0) else
+            date(add(offset.year, 1), month, day)).isoformat()
 
 
-def prev_date():
-    pass
+@set_offset
+def prev_date(month, day, offset=None):
+    in_current_year = date(offset.year, month, day)
+    return (in_current_year
+            if lt(_diff_dates(offset, in_current_year), 0) else
+            date(sub(offset.year, 1), month, day)).isoformat()
 
 
-def nearest_date():
-    pass
+@set_offset
+def nearest_date(month, day, offset=None):
+    return min((
+        date(offset.year, month, day),  # in current year
+        date(add(offset.year, 1), month, day),  # in next year
+        date(sub(offset.year, 1), month, day),  # in previous year
+    ), key=lambda d: abs(_diff_dates(offset, d))).isoformat()
 
 
 if __name__ == "__main__":
@@ -131,20 +161,37 @@ if __name__ == "__main__":
     assert nearest("2014-01-01", weekday=WEEKDAY_SAT) == "2014-01-04"
     assert nearest("2014-01-01", weekday=WEEKDAY_SUN) == "2013-12-29"
 
-    # test 'nth' with '2014-01' (wed)
+    # test 'nth' with year: 2014, month: 01 (wed)
     assert nth(2014, 1, n=1, weekday=WEEKDAY_WED) == "2014-01-01"
     assert nth(2014, 1, n=2, weekday=WEEKDAY_WED) == "2014-01-08"
     assert nth(2014, 1, n=3, weekday=WEEKDAY_WED) == "2014-01-15"
     assert nth(2014, 1, n=4, weekday=WEEKDAY_WED) == "2014-01-22"
     assert nth(2014, 1, n=5, weekday=WEEKDAY_WED) == "2014-01-29"
 
-    # test 'nth' with '2014-01' (sun)
+    # test 'nth' with year: 2014, month: 01 (sun)
     assert nth(2014, 1, n=1, weekday=WEEKDAY_SUN) == "2014-01-05"
     assert nth(2014, 1, n=2, weekday=WEEKDAY_SUN) == "2014-01-12"
     assert nth(2014, 1, n=3, weekday=WEEKDAY_SUN) == "2014-01-19"
     assert nth(2014, 1, n=4, weekday=WEEKDAY_SUN) == "2014-01-26"
 
-    # test 'last' with '2014-01'
+    # test 'last' with year: 2014, month: 01
     assert last(2014, 1, weekday=WEEKDAY_FRI) == "2014-01-31"
     assert last(2014, 1, weekday=WEEKDAY_THU) == "2014-01-30"
     assert last(2014, 1, weekday=WEEKDAY_SAT) == "2014-01-25"
+
+    # test 'next_date'
+    assert next_date(12, 31, offset="2014-01-01") == "2014-12-31"
+    assert next_date(1, 1, offset="2014-01-01") == "2015-01-01"
+    assert next_date(1, 2, offset="2014-01-01") == "2014-01-02"
+
+    # test 'prev_date'
+    assert prev_date(1, 1, offset="2014-01-01") == "2013-01-01"
+    assert prev_date(12, 31, offset="2014-01-01") == "2013-12-31"
+    assert prev_date(1, 2, offset="2014-01-01") == "2013-01-02"
+
+    # test 'nearest_date'
+    assert nearest_date(1, 1, offset="2014-01-01") == "2014-01-01"
+    assert nearest_date(12, 31, offset="2014-01-01") == "2013-12-31"
+    assert nearest_date(1, 2, offset="2014-01-01") == "2014-01-02"
+    assert nearest_date(7, 2, offset="2014-01-01") == "2014-07-02"
+    assert nearest_date(7, 3, offset="2014-01-01") == "2013-07-03"
