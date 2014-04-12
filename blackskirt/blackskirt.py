@@ -16,6 +16,10 @@ nearest_weekday = ops.nearest
 nth_weekday = ops.nth
 last_weekday = ops.last
 
+next_date = ops.next_date
+prev_date = ops.prev_date
+nearest_date = ops.nearest_date
+
 
 if __name__ == "__main__":
     assert mondayise("2014-01-04",
