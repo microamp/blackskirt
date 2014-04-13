@@ -4,7 +4,7 @@ Relative weekday/date utilities useful for finding public holidays
 
 Installation
 ------------
-.. code-black:: bash
+.. code-block:: bash
 
     pip install blackskirt
 
