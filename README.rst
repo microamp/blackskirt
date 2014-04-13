@@ -20,6 +20,7 @@ Examples
                                        nth_weekday, last_weekday,)
 
 ``mondayise`` - New Year's Day: 1 January (or the following Monday if it falls on a Saturday or Sunday)
+
 .. code-block:: python
 
     # 2011-01-01 is Saturday
@@ -27,6 +28,7 @@ Examples
                                           (WEEKDAY_SUN, WEEKDAY_MON),)) == "2011-01-03"
 
 ``mondayise`` - Day after New Year's Day: 2 January (or the following Monday if it falls on a Saturday, or the following Tuesday if it falls on a Sunday)
+
 .. code-block:: python
 
     # 2011-01-02 is Sunday
@@ -34,11 +36,13 @@ Examples
                                           (WEEKDAY_SUN, WEEKDAY_TUE),)) == "2011-01-03"
 
 ``nth_weekday`` - Labour Day: The fourth Monday in October
+
 .. code-block:: python
 
     assert nth_weekday(2014, 10, n=4, weekday=WEEKDAY_MON) == "2014-10-27"
 
 ``next_weekday`` - Marlborough provincial anniversary day: First Monday after Labour Day
+
 .. code-block:: python
 
     assert next_weekday("2014-10-27", weekday=WEEKDAY_MON) == "2014-11-03"
@@ -51,6 +55,7 @@ Examples
     nearest_weekday("2014-01-22", weekday=WEEKDAY_MON) == "2014-01-20"
 
 ``last_weekday`` - Memorial Day: Last Monday in May
+
 .. code-block:: python
 
     assert last_weekday(2014, 5, weekday=WEEKDAY_MON) == "2014-05-26"
