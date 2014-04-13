@@ -12,48 +12,50 @@ Examples
 --------
 .. code-block:: python
 
-    from blackskirt import WEEKDAY_MON, WEEKDAY_TUE, WEEKDAY_SAT, WEEKDAY_SUN
+    from blackskirt import (WEEKDAY_MON, WEEKDAY_TUE, WEEKDAY_WED,
+                            WEEKDAY_THU, WEEKDAY_FRI, WEEKDAY_SAT,
+                            WEEKDAY_SUN,)
     from blackskirt.blackskirt import (mondayise, next_weekday,
                                        prev_weekday, nearest_weekday,
                                        nth_weekday, last_weekday,)
 
-- New Year's Day: 1 January (or the following Monday if it falls on a Saturday or Sunday)
+``mondayise`` - New Year's Day: 1 January (or the following Monday if it falls on a Saturday or Sunday)
 .. code-block:: python
 
     # 2011-01-01 is Saturday
     assert mondayise("2011-01-01", cases=((WEEKDAY_SAT, WEEKDAY_MON),
                                           (WEEKDAY_SUN, WEEKDAY_MON),)) == "2011-01-03"
 
-- Day after New Year's Day: 2 January (or the following Monday if it falls on a Saturday, or the following Tuesday if it falls on a Sunday)
+``mondayise`` - Day after New Year's Day: 2 January (or the following Monday if it falls on a Saturday, or the following Tuesday if it falls on a Sunday)
 .. code-block:: python
 
     # 2011-01-02 is Sunday
     assert mondayise("2011-01-02", cases=((WEEKDAY_SAT, WEEKDAY_MON),
                                           (WEEKDAY_SUN, WEEKDAY_TUE),)) == "2011-01-03"
 
-- Labour Day: The fourth Monday in October
+``nth_weekday`` - Labour Day: The fourth Monday in October
 .. code-block:: python
 
     assert nth_weekday(2014, 10, n=4, weekday=WEEKDAY_MON) == "2014-10-27"
 
-- Marlborough provincial anniversary day: First Monday after Labour Day
+``next_weekday`` - Marlborough provincial anniversary day: First Monday after Labour Day
 .. code-block:: python
 
     assert next_weekday("2014-10-27", weekday=WEEKDAY_MON) == "2014-11-03"
 
-- Wellington provincial anniversary day: 22 January (Monday nearest to the actual day)
+``nearest_weekday`` - Wellington provincial anniversary day: 22 January (Monday nearest to the actual day)
 
 .. code-block:: python
 
     # 2014-01-22 is Wednesday
     nearest_weekday("2014-01-22", weekday=WEEKDAY_MON) == "2014-01-20"
 
-- Memorial Day: Last Monday in May
+``last_weekday`` - Memorial Day: Last Monday in May
 .. code-block:: python
 
     assert last_weekday(2014, 5, weekday=WEEKDAY_MON) == "2014-05-26"
 
-- Inauguration Day: First January 20 following a Presidential election
+``next_day`` - Inauguration Day: First January 20 following a Presidential election
 
   .. code-block:: python
 
