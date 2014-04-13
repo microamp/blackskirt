@@ -59,10 +59,11 @@ def set_offset(f):
     def _to_date(dt_):
         return date(dt_.year, dt_.month, dt_.day)
 
-    def wrap(*args, offset=None):
+    def wrap(*args, **kwargs):
         return f(*args,
-                 offset=(_to_date(datetime.strptime(offset, DATE_FORMAT))
-                         if offset else
+                 offset=(_to_date(datetime.strptime(kwargs["offset"],
+                                                    DATE_FORMAT))
+                         if kwargs.get("offset") is not None else
                          date.today()))
 
     return wrap

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from blackskirt import WEEKDAY_MON, WEEKDAY_SAT, WEEKDAY_SUN
-from blackskirt.lib import ops
+from . import WEEKDAY_MON, WEEKDAY_SAT, WEEKDAY_SUN
+from .lib import ops
 
 
 def mondayise(d, cases=((WEEKDAY_SAT, WEEKDAY_MON),
