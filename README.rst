@@ -62,11 +62,10 @@ Examples
 
 ``next_day`` - Inauguration Day: First January 20 following a Presidential election
 
-  .. code-block:: python
+.. code-block:: python
 
     # 2012-11-06 was the previous presidential election day in US
     assert next_date(1, 20, offset="2012-11-06") == "2013-01-20"
-
 
 License
 -------
