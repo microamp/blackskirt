@@ -60,7 +60,7 @@ Examples
 
     assert last_weekday(2014, 5, weekday=WEEKDAY_MON) == "2014-05-26"
 
-``next_day`` - Inauguration Day: First January 20 following a Presidential election
+``next_date`` - Inauguration Day: First January 20 following a Presidential election
 
 .. code-block:: python
 
