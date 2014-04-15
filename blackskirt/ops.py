@@ -48,23 +48,22 @@ def find_weekday(d, format=DATE_FORMAT):
 
 
 def type_convert(f):
-    def wrap(offset, **kwargs):
-        rv = f(datetime.strptime(offset, DATE_FORMAT), **kwargs)
+    def wrap(year=2000, month=1, day=1, **kwargs):
+        rv = f(date(year, month, day), weekday=kwargs["weekday"])
         return rv.strftime(DATE_FORMAT)
 
     return wrap
 
 
 def set_offset(f):
-    def _to_date(dt_):
-        return date(dt_.year, dt_.month, dt_.day)
-
-    def wrap(*args, **kwargs):
-        return f(*args,
-                 offset=(_to_date(datetime.strptime(kwargs["offset"],
-                                                    DATE_FORMAT))
-                         if kwargs.get("offset") is not None else
-                         date.today()))
+    def wrap(month=1, day=1, offset=(2000, 1, 1)):
+        return f(month=month,
+                 day=day,
+                 offset=date(offset[0], offset[1], offset[2]))
+#                 offset=(_to_date(datetime.strptime(kwargs["offset"],
+#                                                    DATE_FORMAT))
+#                         if kwargs.get("offset") is not None else
+#                         date.today()))
 
     return wrap
 
@@ -92,7 +91,7 @@ def nearest_weekday(offset, weekday=WEEKDAY_MON):
                                             weekday)))
 
 
-def nth_weekday(year, month, n=1, weekday=WEEKDAY_MON):
+def nth_weekday(year=2000, month=1, n=1, weekday=WEEKDAY_MON):
     offset = datetime.strptime(_strfy(year, month, 1),
                                DATE_FORMAT)
     return reduce(
@@ -105,7 +104,7 @@ def nth_weekday(year, month, n=1, weekday=WEEKDAY_MON):
     ).strftime(DATE_FORMAT)
 
 
-def last_weekday(year, month, weekday=WEEKDAY_MON):
+def last_weekday(year=2000, month=1, weekday=WEEKDAY_MON):
     offset = datetime.strptime(_strfy(year, month, monthrange(year, month)[1]),
                                DATE_FORMAT)
     return add(
@@ -117,7 +116,7 @@ def last_weekday(year, month, weekday=WEEKDAY_MON):
 
 
 @set_offset
-def next_date(month, day, offset=None):
+def next_date(month=1, day=1, offset=None):
     in_current_year = date(offset.year, month, day)
     return (in_current_year
             if gt(_diff_dates(offset, in_current_year), 0) else
@@ -125,7 +124,7 @@ def next_date(month, day, offset=None):
 
 
 @set_offset
-def prev_date(month, day, offset=None):
+def prev_date(month=1, day=1, offset=None):
     in_current_year = date(offset.year, month, day)
     return (in_current_year
             if lt(_diff_dates(offset, in_current_year), 0) else
@@ -133,7 +132,7 @@ def prev_date(month, day, offset=None):
 
 
 @set_offset
-def nearest_date(month, day, offset=None):
+def nearest_date(month=1, day=1, offset=None):
     return min((
         date(offset.year, month, day),  # in current year
         date(add(offset.year, 1), month, day),  # in next year
@@ -141,7 +140,10 @@ def nearest_date(month, day, offset=None):
     ), key=lambda d: abs(_diff_dates(offset, d))).isoformat()
 
 
-def mondayise(d, cases=((WEEKDAY_SAT, WEEKDAY_MON),
-                        (WEEKDAY_SUN, WEEKDAY_MON))):
-    wd = find_weekday(d)
-    return next_weekday(d, weekday=dict(cases)[wd]) if wd in dict(cases) else d
+def mondayise(year=2000, month=1, day=1, cases=((WEEKDAY_SAT, WEEKDAY_MON),
+                                                (WEEKDAY_SUN, WEEKDAY_MON))):
+    wd = date(year, month, day).isoweekday()
+    return next_weekday(
+        year=year, month=month, day=day,
+        weekday=dict(cases)[wd]
+    ) if wd in dict(cases) else _strfy(year, month, day)
