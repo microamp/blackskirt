@@ -43,10 +43,6 @@ def _strfy(year, month, day):
                                          day=zfill(str(day), 2))
 
 
-def find_weekday(d, format=DATE_FORMAT):
-    return datetime.strptime(d, format).isoweekday()
-
-
 def type_convert(f):
     def wrap(year=2000, month=1, day=1, **kwargs):
         rv = f(date(year, month, day), weekday=kwargs["weekday"])
@@ -60,10 +56,6 @@ def set_offset(f):
         return f(month=month,
                  day=day,
                  offset=date(offset[0], offset[1], offset[2]))
-#                 offset=(_to_date(datetime.strptime(kwargs["offset"],
-#                                                    DATE_FORMAT))
-#                         if kwargs.get("offset") is not None else
-#                         date.today()))
 
     return wrap
 
