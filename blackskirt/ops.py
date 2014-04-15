@@ -6,7 +6,7 @@ from calendar import monthrange
 from operator import sub, add, neg, gt, ge, lt, mul
 from functools import partial
 
-from blackskirt import DATE_FORMAT, WEEKDAYS, WEEKDAY_MON
+from . import DATE_FORMAT, WEEKDAYS, WEEKDAY_MON, WEEKDAY_SAT, WEEKDAY_SUN
 
 if version_info[0] == 2:
     from string import zfill
@@ -70,19 +70,19 @@ def set_offset(f):
 
 
 @type_convert
-def next(offset, weekday=WEEKDAY_MON):
+def next_weekday(offset, weekday=WEEKDAY_MON):
     return add(offset, timedelta(days=_diff_next(offset.isoweekday(),
                                                  weekday)))
 
 
 @type_convert
-def prev(offset, weekday=WEEKDAY_MON):
+def prev_weekday(offset, weekday=WEEKDAY_MON):
     return add(offset, timedelta(days=_diff_prev(offset.isoweekday(),
                                                  weekday)))
 
 
 @type_convert
-def nearest(offset, weekday=WEEKDAY_MON):
+def nearest_weekday(offset, weekday=WEEKDAY_MON):
     def _days(wd1, wd2):
         diff_next = _diff_next(wd1, wd2, inclusive=True)
         diff_prev = _diff_prev(wd1, wd2, inclusive=True)
@@ -92,7 +92,7 @@ def nearest(offset, weekday=WEEKDAY_MON):
                                             weekday)))
 
 
-def nth(year, month, n=1, weekday=WEEKDAY_MON):
+def nth_weekday(year, month, n=1, weekday=WEEKDAY_MON):
     offset = datetime.strptime(_strfy(year, month, 1),
                                DATE_FORMAT)
     return reduce(
@@ -105,7 +105,7 @@ def nth(year, month, n=1, weekday=WEEKDAY_MON):
     ).strftime(DATE_FORMAT)
 
 
-def last(year, month, weekday=WEEKDAY_MON):
+def last_weekday(year, month, weekday=WEEKDAY_MON):
     offset = datetime.strptime(_strfy(year, month, monthrange(year, month)[1]),
                                DATE_FORMAT)
     return add(
@@ -139,3 +139,9 @@ def nearest_date(month, day, offset=None):
         date(add(offset.year, 1), month, day),  # in next year
         date(sub(offset.year, 1), month, day),  # in previous year
     ), key=lambda d: abs(_diff_dates(offset, d))).isoformat()
+
+
+def mondayise(d, cases=((WEEKDAY_SAT, WEEKDAY_MON),
+                        (WEEKDAY_SUN, WEEKDAY_MON))):
+    wd = find_weekday(d)
+    return next_weekday(d, weekday=dict(cases)[wd]) if wd in dict(cases) else d
