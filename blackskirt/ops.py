@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sys import version_info
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
 from calendar import monthrange
 from operator import sub, add, neg, gt, ge, lt, mul
 from functools import partial
@@ -37,12 +37,6 @@ def _diff_prev(wd1, wd2, inclusive=False):
                sub(WEEKDAYS, diff))
 
 
-def _strfy(year, month, day):
-    return "{year}-{month}-{day}".format(year=year,
-                                         month=zfill(str(month), 2),
-                                         day=zfill(str(day), 2))
-
-
 def next_weekday(year=2000, month=1, day=1, weekday=WEEKDAY_MON):
     offset = date(year, month, day)
     return add(
@@ -73,8 +67,7 @@ def nearest_weekday(year=2000, month=1, day=1, weekday=WEEKDAY_MON):
 
 
 def nth_weekday(year=2000, month=1, n=1, weekday=WEEKDAY_MON):
-    offset = datetime.strptime(_strfy(year, month, 1),
-                               DATE_FORMAT)
+    offset = date(year, month, 1)
     return reduce(
         add,
         (offset,
@@ -86,8 +79,7 @@ def nth_weekday(year=2000, month=1, n=1, weekday=WEEKDAY_MON):
 
 
 def last_weekday(year=2000, month=1, weekday=WEEKDAY_MON):
-    offset = datetime.strptime(_strfy(year, month, monthrange(year, month)[1]),
-                               DATE_FORMAT)
+    offset = date(year, month, monthrange(year, month)[1])
     return add(
         offset,
         timedelta(days=_diff_prev(offset.isoweekday(),
